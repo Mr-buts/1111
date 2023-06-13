@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="HorseSectionModelModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="record">
+    <Key>
+      <PropertyRef Name="recordid" />
+    </Key>
+    <Property Name="recordid" Type="Int32" Nullable="false" />
+    <Property Name="workdayid" Type="Int32" Nullable="false" />
+    <Property Name="userid" Type="Int32" Nullable="false" />
+    <Property Name="numperson" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="user" Relationship="Self.FK_record_user" FromRole="record" ToRole="user" />
+    <NavigationProperty Name="workday" Relationship="Self.FK_record_workday" FromRole="record" ToRole="workday" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="user">
+    <Key>
+      <PropertyRef Name="userid" />
+    </Key>
+    <Property Name="userid" Type="Int32" Nullable="false" />
+    <Property Name="surname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="patronymic" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="phone" Type="String" MaxLength="11" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="password" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="record" Relationship="Self.FK_record_user" FromRole="user" ToRole="record" />
+  </EntityType>
+  <EntityType Name="workday">
+    <Key>
+      <PropertyRef Name="workdayid" />
+    </Key>
+    <Property Name="workdayid" Type="Int32" Nullable="false" />
+    <Property Name="workdaydate" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="record" Relationship="Self.FK_record_workday" FromRole="workday" ToRole="record" />
+  </EntityType>
+  <Association Name="FK_record_user">
+    <End Role="user" Type="Self.user" Multiplicity="1" />
+    <End Role="record" Type="Self.record" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="user">
+        <PropertyRef Name="userid" />
+      </Principal>
+      <Dependent Role="record">
+        <PropertyRef Name="userid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_record_workday">
+    <End Role="workday" Type="Self.workday" Multiplicity="1" />
+    <End Role="record" Type="Self.record" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="workday">
+        <PropertyRef Name="workdayid" />
+      </Principal>
+      <Dependent Role="record">
+        <PropertyRef Name="workdayid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="HorseSectionModelEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="record" EntityType="Self.record" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <EntitySet Name="user" EntityType="Self.user" />
+    <EntitySet Name="workday" EntityType="Self.workday" />
+    <AssociationSet Name="FK_record_user" Association="Self.FK_record_user">
+      <End Role="user" EntitySet="user" />
+      <End Role="record" EntitySet="record" />
+    </AssociationSet>
+    <AssociationSet Name="FK_record_workday" Association="Self.FK_record_workday">
+      <End Role="workday" EntitySet="workday" />
+      <End Role="record" EntitySet="record" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
